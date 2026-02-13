@@ -29,16 +29,24 @@ export async function POST(req: Request) {
         const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
         const twimlUrl = `${baseUrl}/api/twiml-reminder?name=${encodeURIComponent(patientName || "Patient")}&time=${encodeURIComponent(appointmentTime || "upcoming")}`;
 
+        if (!fromPhone) {
+            return NextResponse.json({
+                called: false,
+                error: "No Twilio phone number configured. Purchase a number at twilio.com/console/phone-numbers and set TWILIO_PHONE_NUMBER in .env.local"
+            }, { status: 400 });
+        }
+
         const call = await client.calls.create({
             to: patientPhone,
-            from: fromPhone || "+15005550006", // Magic number for testing if not set
+            from: fromPhone,
             url: twimlUrl,
         });
 
         return NextResponse.json({ called: true, sid: call.sid });
 
-    } catch (error) {
+    } catch (error: any) {
         console.error("[/api/call-reminder] Error:", error);
-        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+        const msg = error?.message || error?.toString() || "Internal Server Error";
+        return NextResponse.json({ called: false, error: msg }, { status: 500 });
     }
 }

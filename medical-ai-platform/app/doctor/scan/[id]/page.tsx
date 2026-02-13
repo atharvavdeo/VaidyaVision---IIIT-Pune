@@ -92,26 +92,32 @@ export default function ScanReview() {
             });
             const mlData = await mlRes.json();
 
-            if (mlData.status === "OK") {
+            if (mlData.status === "ACCEPTED" || mlData.status === "REJECTED") {
                 // Update scan in DB via PATCH
                 await fetch(`/api/scans/${scan.id}`, {
                     method: "PATCH",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        aiDiagnosis: mlData.diagnosis,
-                        aiConfidence: mlData.confidence,
-                        aiUncertainty: mlData.uncertainty,
+                        aiDiagnosis: mlData.status === "REJECTED" ? `UNCERTAIN: ${mlData.reason || 'High uncertainty'}` : mlData.diagnosis,
+                        aiConfidence: mlData.confidence ?? 0,
+                        aiUncertainty: mlData.uncertainty ?? 0,
                         heatmapUrl: mlData.heatmap_url,
-                        expertUsed: mlData.expert_used,
-                        triageScore: mlData.triage_score,
-                        status: "pending",
+                        expertUsed: mlData.modality,
+                        triageScore: mlData.triage_score ?? 0,
+                        status: mlData.status === "REJECTED" ? "rejected" : "pending",
                     }),
                 });
                 // Refresh scan data
                 await fetchScanResult();
-                showToast(`ML Analysis complete: ${mlData.diagnosis} (${(mlData.confidence * 100).toFixed(1)}% confidence)`);
+                if (mlData.status === "REJECTED") {
+                    showToast(`Analysis uncertain (${(mlData.uncertainty * 100).toFixed(1)}% uncertainty) — flagged for manual review`, "error");
+                } else {
+                    showToast(`ML Analysis complete: ${mlData.diagnosis} (${(mlData.confidence * 100).toFixed(1)}% confidence)`);
+                }
+            } else if (mlData.status === "ERROR") {
+                showToast(`ML Error: ${mlData.error || 'Unknown error'}`, "error");
             } else {
-                showToast("ML Analysis returned an error. Check server logs.", "error");
+                showToast(`Unexpected ML response: ${JSON.stringify(mlData).slice(0, 100)}`, "error");
             }
         } catch (err) {
             console.error(err);

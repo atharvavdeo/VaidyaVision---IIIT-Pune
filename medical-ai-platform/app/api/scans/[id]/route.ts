@@ -29,7 +29,7 @@ export async function PATCH(
         }
 
         const body = await req.json();
-        const { status, doctorNotes } = body;
+        const { status, doctorNotes, aiDiagnosis, aiConfidence, aiUncertainty, heatmapUrl, expertUsed, triageScore } = body;
 
         const updateData: Record<string, any> = {
             doctorId: user.id,
@@ -38,6 +38,12 @@ export async function PATCH(
 
         if (status) updateData.status = status;
         if (doctorNotes !== undefined) updateData.doctorNotes = doctorNotes;
+        if (aiDiagnosis !== undefined) updateData.aiDiagnosis = aiDiagnosis;
+        if (aiConfidence !== undefined) updateData.aiConfidence = aiConfidence;
+        if (aiUncertainty !== undefined) updateData.aiUncertainty = aiUncertainty;
+        if (heatmapUrl !== undefined) updateData.heatmapUrl = heatmapUrl;
+        if (expertUsed !== undefined) updateData.expertUsed = expertUsed;
+        if (triageScore !== undefined) updateData.triageScore = triageScore;
 
         await db.update(scans).set(updateData).where(eq(scans.id, scanId));
 

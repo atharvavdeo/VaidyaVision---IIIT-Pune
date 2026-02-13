@@ -29,7 +29,7 @@ export async function POST(req: Request) {
     // In a real app, use a proper email template
     const { data, error } = await resend.emails.send({
       from: "VaidyaVision <onboarding@resend.dev>",
-      to: scan.patient.email,
+      to: "atharva.deo03@svkmmumbai.onmicrosoft.com",
       subject: "🏥 Your Medical Report is Ready",
       html: `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
