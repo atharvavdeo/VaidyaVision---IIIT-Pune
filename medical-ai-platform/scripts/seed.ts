@@ -114,74 +114,74 @@ async function main() {
         {
             patientId: createdPatients[0].id, modality: "lung", status: "pending", priority: "critical",
             symptoms: "Severe chest pain radiating to left arm, coughing blood, shortness of breath at rest",
-            imageUrl: "/uploads/a509797a678f8e_CHF-1c1.jpg", aiDiagnosis: "Bacterial Pneumonia",
-            aiConfidence: 0.92, aiUncertainty: 0.04, triageScore: 88,
+            imageUrl: "/uploads/a509797a678f8e_CHF-1c1.jpg", aiDiagnosis: null,
+            aiConfidence: null, aiUncertainty: null, triageScore: null,
             uploadedAt: new Date(Date.now() - 1000 * 60 * 60 * 2)
         },
         {
             patientId: createdPatients[0].id, modality: "lung", status: "completed", priority: "high",
             symptoms: "Follow-up after antibiotic course, still wheezing",
-            imageUrl: "/uploads/a50e9a812aaaab_6-diffuse-legionella.jpg", aiDiagnosis: "Viral Pneumonia",
-            aiConfidence: 0.88, aiUncertainty: 0.06, triageScore: 65,
+            imageUrl: "/uploads/a50e9a812aaaab_6-diffuse-legionella.jpg", aiDiagnosis: null,
+            aiConfidence: null, aiUncertainty: null, triageScore: null,
             uploadedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5)
         },
         {
-            patientId: createdPatients[1].id, modality: "brain", status: "pending", priority: "high",
-            symptoms: "Persistent headache for 3 weeks, dizziness, blurred vision in right eye",
-            imageUrl: "/uploads/a50e99d430f376_4-hemorrhage-post-biopsy.jpg", aiDiagnosis: "Glioma",
-            aiConfidence: 0.95, aiUncertainty: 0.02, triageScore: 82,
+            patientId: createdPatients[1].id, modality: "lung", status: "pending", priority: "high",
+            symptoms: "Persistent headache for 3 weeks, cough with hemoptysis, dizziness",
+            imageUrl: "/uploads/a50e99d430f376_4-hemorrhage-post-biopsy.jpg", aiDiagnosis: null,
+            aiConfidence: null, aiUncertainty: null, triageScore: null,
             uploadedAt: new Date(Date.now() - 1000 * 60 * 60 * 5)
         },
         {
-            patientId: createdPatients[1].id, modality: "brain", status: "pending", priority: "medium",
-            symptoms: "Mild concussion follow-up, occasional vertigo",
-            imageUrl: "/uploads/a50e9d58ded69a_8-Longinfarct.jpg", aiDiagnosis: "No Tumor",
-            aiConfidence: 0.78, aiUncertainty: 0.12, triageScore: 35,
+            patientId: createdPatients[1].id, modality: "lung", status: "pending", priority: "medium",
+            symptoms: "Mild chest pain, occasional vertigo, dry cough",
+            imageUrl: "/uploads/a50e9d58ded69a_8-Longinfarct.jpg", aiDiagnosis: null,
+            aiConfidence: null, aiUncertainty: null, triageScore: null,
             uploadedAt: new Date(Date.now() - 1000 * 60 * 60 * 24)
         },
         {
-            patientId: createdPatients[2].id, modality: "skin", status: "pending", priority: "medium",
-            symptoms: "New mole on forearm, asymmetric border, growing for 3 months",
-            imageUrl: "/uploads/a50e9a848bc956_5a-NHL.jpg", aiDiagnosis: "Melanocytic Nevi",
-            aiConfidence: 0.85, aiUncertainty: 0.08, triageScore: 52,
+            patientId: createdPatients[2].id, modality: "lung", status: "pending", priority: "medium",
+            symptoms: "Chronic cough for 3 months, night sweats, mild weight loss",
+            imageUrl: "/uploads/a50e9a848bc956_5a-NHL.jpg", aiDiagnosis: null,
+            aiConfidence: null, aiUncertainty: null, triageScore: null,
             uploadedAt: new Date(Date.now() - 1000 * 60 * 60 * 3)
         },
         {
-            patientId: createdPatients[2].id, modality: "skin", status: "completed", priority: "low",
-            symptoms: "Routine annual skin screening",
-            imageUrl: "/uploads/a50e9a87e65d1c_5b-NHL.jpg", aiDiagnosis: "Benign Keratosis",
-            aiConfidence: 0.97, aiUncertainty: 0.01, triageScore: 12,
+            patientId: createdPatients[2].id, modality: "lung", status: "completed", priority: "low",
+            symptoms: "Routine chest X-ray for annual screening",
+            imageUrl: "/uploads/a50e9a87e65d1c_5b-NHL.jpg", aiDiagnosis: null,
+            aiConfidence: null, aiUncertainty: null, triageScore: null,
             uploadedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 10)
         },
         {
             patientId: createdPatients[3].id, modality: "lung", status: "pending", priority: "critical",
             symptoms: "COPD exacerbation, can't walk 10 meters without gasping, SpO2 88%",
-            imageUrl: "/uploads/a509797a678f8e_CHF-1c1.jpg", aiDiagnosis: "Tuberculosis",
-            aiConfidence: 0.91, aiUncertainty: 0.05, triageScore: 90,
+            imageUrl: "/uploads/a509797a678f8e_CHF-1c1.jpg", aiDiagnosis: null,
+            aiConfidence: null, aiUncertainty: null, triageScore: null,
             uploadedAt: new Date(Date.now() - 1000 * 60 * 60 * 1)
         },
         {
-            patientId: createdPatients[3].id, modality: "ecg", status: "completed", priority: "high",
-            symptoms: "Irregular heartbeat, chest tightness, palpitations during night",
-            imageUrl: "/uploads/a50e9d58ded69a_8-Longinfarct.jpg", aiDiagnosis: "History of MI",
-            aiConfidence: 0.89, aiUncertainty: 0.07, triageScore: 72,
+            patientId: createdPatients[3].id, modality: "lung", status: "completed", priority: "high",
+            symptoms: "Irregular heartbeat, chest tightness, palpitations during night, chronic cough",
+            imageUrl: "/uploads/a50e9d58ded69a_8-Longinfarct.jpg", aiDiagnosis: null,
+            aiConfidence: null, aiUncertainty: null, triageScore: null,
             uploadedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3),
-            doctorNotes: "ECG confirms old MI markers. Continue current medication. Schedule echo."
+            doctorNotes: "Chest X-ray shows possible infiltrates. Continue current medication. Schedule follow-up."
         },
         {
-            patientId: createdPatients[4].id, modality: "brain", status: "pending", priority: "medium",
-            symptoms: "Pregnancy-related headaches, visual disturbances, BP 150/95",
-            imageUrl: "/uploads/a50e99d430f376_4-hemorrhage-post-biopsy.jpg", aiDiagnosis: "No Tumor",
-            aiConfidence: 0.82, aiUncertainty: 0.09, triageScore: 55,
+            patientId: createdPatients[4].id, modality: "lung", status: "pending", priority: "medium",
+            symptoms: "Pregnancy-related shortness of breath, persistent cough, BP 150/95",
+            imageUrl: "/uploads/a50e99d430f376_4-hemorrhage-post-biopsy.jpg", aiDiagnosis: null,
+            aiConfidence: null, aiUncertainty: null, triageScore: null,
             uploadedAt: new Date(Date.now() - 1000 * 60 * 60 * 4)
         },
         {
-            patientId: createdPatients[4].id, modality: "skin", status: "completed", priority: "low",
-            symptoms: "Pregnancy rash on abdomen, itchy patches",
-            imageUrl: "/uploads/a50e9a87e65d1c_5b-NHL.jpg", aiDiagnosis: "Dermatofibroma",
-            aiConfidence: 0.94, aiUncertainty: 0.03, triageScore: 18,
+            patientId: createdPatients[4].id, modality: "lung", status: "completed", priority: "low",
+            symptoms: "Mild chest discomfort, cough during pregnancy",
+            imageUrl: "/uploads/a50e9a87e65d1c_5b-NHL.jpg", aiDiagnosis: null,
+            aiConfidence: null, aiUncertainty: null, triageScore: null,
             uploadedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7),
-            doctorNotes: "Benign finding. Likely pruritic urticarial papules related to pregnancy. Use calamine."
+            doctorNotes: "Chest X-ray appears normal. Monitor respiratory symptoms during pregnancy."
         },
     ];
 
@@ -232,7 +232,7 @@ async function main() {
             {
                 patientId: createdPatients[1].id, doctorId: doctor.id,
                 scheduledAt: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 11, 30),
-                type: "review" as const, notes: "Brain MRI review - discuss glioma findings", status: "scheduled" as const
+                type: "review" as const, notes: "Chest X-ray review - discuss pulmonary findings", status: "scheduled" as const
             },
             {
                 patientId: createdPatients[3].id, doctorId: doctor.id,
@@ -247,7 +247,7 @@ async function main() {
             {
                 patientId: createdPatients[2].id, doctorId: doctor.id,
                 scheduledAt: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 9, 0),
-                type: "review" as const, notes: "Skin lesion dermoscopy follow-up", status: "scheduled" as const
+                type: "review" as const, notes: "Chest X-ray follow-up - respiratory review", status: "scheduled" as const
             },
             {
                 patientId: createdPatients[0].id, doctorId: doctor.id,
@@ -257,12 +257,12 @@ async function main() {
             {
                 patientId: createdPatients[3].id, doctorId: doctor.id,
                 scheduledAt: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 3, 11, 0),
-                type: "follow_up" as const, notes: "ECG follow-up + echo review", status: "scheduled" as const
+                type: "follow_up" as const, notes: "COPD follow-up + lung imaging review", status: "scheduled" as const
             },
             {
                 patientId: createdPatients[2].id, doctorId: doctor.id,
                 scheduledAt: new Date(now.getFullYear(), now.getMonth(), now.getDate() - 5, 14, 0),
-                type: "initial" as const, notes: "Initial skin screening consultation", status: "completed" as const
+                type: "initial" as const, notes: "Initial chest screening consultation", status: "completed" as const
             },
         ];
 

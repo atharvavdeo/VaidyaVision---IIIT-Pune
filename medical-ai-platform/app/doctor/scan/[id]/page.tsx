@@ -80,11 +80,11 @@ export default function ScanReview() {
         setRunningML(true);
         try {
             // Re-upload the image to the ML pipeline for real-time analysis
+            // Do NOT force modality — let the ModalityRouter auto-detect the correct expert
             const imgRes = await fetch(scan.imageUrl);
             const blob = await imgRes.blob();
             const formData = new FormData();
             formData.append("file", blob, "scan.jpg");
-            formData.append("modality", scan.modality);
 
             const mlRes = await fetch("http://localhost:8000/predict", {
                 method: "POST",
