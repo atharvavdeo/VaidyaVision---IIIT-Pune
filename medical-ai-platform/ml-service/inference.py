@@ -83,65 +83,56 @@ def load_models(models_dir: str = "models"):
 
 
 # ================================================================
-# GradCAM for heatmap
+# GradCAM for heatmap (matches training notebook implementation)
 # ================================================================
-def generate_gradcam(model, input_tensor: torch.Tensor, target_class: int, modality: str) -> np.ndarray:
-    """Generate GradCAM heatmap for the target class."""
-    # Get the last conv layer depending on architecture
-    target_layer = _get_target_layer(model, modality)
-    if target_layer is None:
-        return np.zeros((224, 224), dtype=np.uint8)
+class GradCAM:
+    def __init__(self, model, target_layer):
+        self.model = model
+        self.target_layer = target_layer
+        self.gradients = None
+        self.activations = None
+        self.hook_layers()
 
-    activations = []
-    gradients = []
+    def hook_layers(self):
+        def forward_hook(module, input, output):
+            self.activations = output
+        def backward_hook(module, grad_input, grad_output):
+            self.gradients = grad_output[0]
 
-    def fwd_hook(module, inp, out):
-        activations.append(out.detach())
+        self.target_layer.register_forward_hook(forward_hook)
+        self.target_layer.register_backward_hook(backward_hook)
 
-    def bwd_hook(module, grad_in, grad_out):
-        gradients.append(grad_out[0].detach())
+    def generate_heatmap(self, input_tensor, class_idx):
+        self.model.zero_grad()
+        output = self.model(input_tensor)
+        score = output[0][class_idx]
+        score.backward()
 
-    fwd_handle = target_layer.register_forward_hook(fwd_hook)
-    bwd_handle = target_layer.register_full_backward_hook(bwd_hook)
+        grads = self.gradients.data.cpu().numpy()[0]
+        acts = self.activations.data.cpu().numpy()[0]
+        weights = np.mean(grads, axis=(1, 2))
 
-    # Forward + backward
-    model.zero_grad()
-    output = model(input_tensor)
-    loss = output[0, target_class]
-    loss.backward()
+        cam = np.zeros(acts.shape[1:], dtype=np.float32)
+        for i, w in enumerate(weights):
+            cam += w * acts[i]
 
-    fwd_handle.remove()
-    bwd_handle.remove()
-
-    act = activations[0].squeeze(0)  # (C, H, W)
-    grad = gradients[0].squeeze(0)   # (C, H, W)
-
-    weights = grad.mean(dim=(1, 2))  # GAP over spatial dims
-    cam = torch.zeros(act.shape[1:], device=DEVICE)
-    for i, w in enumerate(weights):
-        cam += w * act[i]
-
-    cam = F.relu(cam)
-    cam = cam - cam.min()
-    if cam.max() > 0:
-        cam = cam / cam.max()
-
-    cam_np = cam.cpu().numpy()
-    cam_resized = cv2.resize(cam_np, (224, 224))
-    cam_uint8 = (cam_resized * 255).astype(np.uint8)
-
-    return cam_uint8
+        cam = np.maximum(cam, 0)
+        cam = cv2.resize(cam, (224, 224))
+        cam = cam - np.min(cam)
+        if np.max(cam) > 0:
+            cam = cam / np.max(cam)
+        return cam
 
 
 def _get_target_layer(model, modality: str):
-    """Return the last convolutional layer for each architecture."""
+    """Return the correct last conv/norm layer for each architecture (matches training)."""
     try:
         if modality == 'brain':
             # EfficientNet-B2
             return model.backbone.conv_head
         elif modality == 'lung':
-            # DenseNet121
-            return model.backbone.features.denseblock4
+            # DenseNet121 — norm5 is the final BatchNorm after denseblock4
+            return model.backbone.features.norm5
         elif modality == 'skin':
             # ResNet50
             return model.backbone.layer4[-1]
@@ -205,20 +196,26 @@ def predict(
     confidence = conf.item()
     predicted_class = class_idx.item()
 
-    # 3. GradCAM
+    # 3. GradCAM (using class-based approach matching training notebook)
     expert.eval()  # Reset to full eval
-    x_grad = TRANSFORM(img).unsqueeze(0).to(DEVICE).requires_grad_(True)
-    heatmap = generate_gradcam(expert, x_grad, predicted_class, modality)
+    target_layer = _get_target_layer(expert, modality)
+    if target_layer is not None:
+        x_grad = TRANSFORM(img).unsqueeze(0).to(DEVICE).requires_grad_(True)
+        cam_engine = GradCAM(expert, target_layer)
+        heatmap = cam_engine.generate_heatmap(x_grad, predicted_class)
+        heatmap_uint8 = (heatmap * 255).astype(np.uint8)
+    else:
+        heatmap_uint8 = np.zeros((224, 224), dtype=np.uint8)
 
     # Colorize heatmap and overlay on original
-    heatmap_colored = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)
+    heatmap_colored = cv2.applyColorMap(heatmap_uint8, cv2.COLORMAP_JET)
+    heatmap_colored_rgb = cv2.cvtColor(heatmap_colored, cv2.COLOR_BGR2RGB)
     original_np = np.array(img.resize((224, 224)))
-    original_bgr = cv2.cvtColor(original_np, cv2.COLOR_RGB2BGR)
-    overlay = cv2.addWeighted(original_bgr, 0.5, heatmap_colored, 0.5, 0)
-    overlay_rgb = cv2.cvtColor(overlay, cv2.COLOR_BGR2RGB)
+    overlay = cv2.addWeighted(original_np, 0.6, heatmap_colored_rgb, 0.4, 0)
 
-    # Encode heatmap as base64
-    _, buf = cv2.imencode(".png", overlay_rgb)
+    # Encode overlay as base64 PNG
+    overlay_bgr = cv2.cvtColor(overlay, cv2.COLOR_RGB2BGR)
+    _, buf = cv2.imencode(".png", overlay_bgr)
     heatmap_b64 = base64.b64encode(buf).decode("utf-8")
 
     # Rejection check
