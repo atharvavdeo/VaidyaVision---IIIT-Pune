@@ -24,6 +24,26 @@
 - **Predictive analytics** for patient outcomes
 - **Real-time doctor-patient collaboration**
 
+
+## 📸 Demo Screenshots
+
+### 1️⃣ Landing Page
+![Workflow Overview](1.png)
+
+### 2️⃣ DashBoard
+![Data Extraction](2.png)
+
+### 3️⃣ Structured Output
+![Structured Output](3.png)
+
+### 4️⃣ Access our APIs
+![Enrichment](4.png)
+
+### 5️⃣ OneClick Medical Reports
+![Outreach](5.png)
+
+### 6️⃣ Medical Research Assistant
+![Lead Sheet](6.png)
 ---
 
 ## ✅ Features Implemented
@@ -136,151 +156,7 @@
 
 ## 🏗️ Architecture Diagrams
 
-### **1. Overall System Architecture**
-
-```mermaid
-graph TB
-    subgraph "Frontend Layer"
-        A[Next.js 14 App Router]
-        A1[Doctor Dashboard]
-        A2[Patient Portal]
-        A3[Research Assistant UI]
-        A --> A1
-        A --> A2
-        A --> A3
-    end
-
-    subgraph "Authentication"
-        B[Clerk Auth]
-        B --> B1[Role-Based Routing]
-        B --> B2[User Sync]
-    end
-
-    subgraph "Backend API Layer"
-        C[Next.js API Routes]
-        C1[/api/upload]
-        C2[/api/ml-proxy]
-        C3[/api/ai]
-        C4[/api/doctor]
-        C5[/api/conversations]
-        C6[/api/research]
-        C7[/api/ocr]
-        C8[/api/medications]
-        C --> C1
-        C --> C2
-        C --> C3
-        C --> C4
-        C --> C5
-        C --> C6
-        C --> C7
-        C --> C8
-    end
-
-    subgraph "ML Service Layer - FastAPI :8000"
-        D[FastAPI Server]
-        D1[POST /predict — Image Inference]
-        D2[POST /ocr/extract — OCR Processing]
-        D3[POST /ocr/clean-report — Prescription Digitization]
-        D4[POST /ocr/prescriptions-only — Medication Extraction]
-        D5[POST /research/ask — Research Q&A]
-        D6[POST /research/crawl-latest — Web Scraping]
-        D7[GET /research/stats]
-        D8[GET /research/export-qa]
-        D --> D1
-        D --> D2
-        D --> D3
-        D --> D4
-        D --> D5
-        D --> D6
-        D --> D7
-        D --> D8
-    end
-
-    subgraph "ML Models — Unified Checkpoint"
-        E[ModalityRouter — ResNet34]
-        F1[BrainExpert — EfficientNetB2]
-        F2[LungExpert — DenseNet121]
-        F3[SkinExpert — ResNet50]
-        F4[ECGExpert — EfficientNetB0]
-        E --> F1
-        E --> F2
-        E --> F3
-        E --> F4
-    end
-
-    subgraph "OCR Pipeline"
-        G1[Google Cloud Vision API — Primary]
-        G2[Multi-pass Tesseract — Fallback]
-        G1 -.-> G4[Groq LLM — Text Cleaning]
-        G2 -.-> G4
-    end
-
-    subgraph "Research System"
-        H1[Firecrawl v4 — Web Scraper]
-        H2[BM25 — Keyword Search]
-        H3[TF-IDF — Cosine Similarity]
-        H4[JSON Article Store]
-        H1 --> H4
-        H4 --> H2
-        H4 --> H3
-        H2 -.-> H5[Groq LLM — RAG Answers]
-        H3 -.-> H5
-    end
-
-    subgraph "Data Storage"
-        J[SQLite Database — Drizzle ORM]
-        J1[Users & Profiles]
-        J2[Scans & Reports]
-        J3[Prescriptions & Medications]
-        J4[Conversations & Messages]
-        J5[Appointments & Follow-Ups]
-        J6[Exercise Routines & Logs]
-        J7[Notifications]
-        J --> J1
-        J --> J2
-        J --> J3
-        J --> J4
-        J --> J5
-        J --> J6
-        J --> J7
-    end
-
-    subgraph "External APIs"
-        K1[Groq API — LLaMA 3.3 70B]
-        K2[Firecrawl API — Web Scraping]
-        K3[Google Cloud Vision API — OCR]
-    end
-
-    A --> B
-    B --> C
-    C --> D
-    D --> E
-    D --> G1
-    D --> G2
-    D --> H1
-    C --> J
-    D --> K1
-    H1 --> K2
-    G4 --> K1
-    H5 --> K1
-    G1 --> K3
-
-    classDef frontend fill:#a8e6cf,stroke:#333,stroke-width:2px
-    classDef backend fill:#ffd3b6,stroke:#333,stroke-width:2px
-    classDef ml fill:#ffaaa5,stroke:#333,stroke-width:2px
-    classDef db fill:#a8dadc,stroke:#333,stroke-width:2px
-    classDef external fill:#e0aaff,stroke:#333,stroke-width:2px
-
-    class A,A1,A2,A3 frontend
-    class B,C,C1,C2,C3,C4,C5,C6,C7,C8 backend
-    class D,E,F1,F2,F3,F4,G1,G2,G4,H1,H2,H3,H4,H5 ml
-    class J,J1,J2,J3,J4,J5,J6,J7 db
-    class K1,K2,K3 external
-```
-
----
-
-### **2. End-to-End Medical Imaging + RAG Pipeline (Detailed)**
+### **1. End-to-End Medical Imaging + RAG Pipeline (Detailed)**
 
 ```mermaid
 graph TB
@@ -444,7 +320,7 @@ graph TB
 
 ---
 
-### **3. Research Assistant RAG Architecture**
+### **2. Research Assistant RAG Architecture**
 
 ```mermaid
 graph TB
@@ -601,142 +477,6 @@ graph TB
 
 ---
 
-## 💾 Database Schema
-
-### **Complete Schema (SQLite + Drizzle ORM)**
-
-```typescript
-// Source: lib/db/schema.ts
-
-// ─── Core Identity ──────────────────────────────────────────────
-
-users
-├─ id (PK, autoincrement)
-├─ clerkId (unique, not null)
-├─ role: "patient" | "doctor" | "admin"
-├─ name, email (unique), imageUrl, phone
-├─ specialty (doctor only)
-├─ age, gender, bloodType, medicalHistory
-├─ isOnboarded (boolean)
-├─ createdAt (timestamp)
-
-doctorProfiles
-├─ id (PK), userId → users.id (unique)
-├─ specialty, degree, experience
-├─ licenseNumber, rating (default 5.0)
-├─ totalConsultations, totalScansReviewed
-
-// ─── Medical Imaging ────────────────────────────────────────────
-
-scans
-├─ id (PK)
-├─ patientId → users.id, doctorId → users.id
-├─ imageUrl, modality: "brain" | "lung" | "skin" | "ecg"
-├─ status: "pending" | "processing" | "completed" | "rejected"
-├─ priority: "low" | "medium" | "high" | "critical"
-├─ symptoms, triageScore
-├─ aiDiagnosis, aiConfidence, aiUncertainty
-├─ heatmapUrl, expertUsed
-├─ doctorNotes, originalFilename
-├─ uploadedAt, reviewedAt (timestamps)
-
-reports
-├─ id (PK)
-├─ scanId → scans.id, patientId → users.id, doctorId → users.id
-├─ diagnosis, findings, recommendations
-├─ severity: "low" | "moderate" | "high" | "critical"
-├─ status: "draft" | "signed"
-├─ language, templateId → templates.id
-├─ signedAt, pdfUrl, createdAt
-
-templates
-├─ id (PK), name, structureJson (JSON), language
-
-// ─── Prescription & Medication Tracking ─────────────────────────
-
-prescriptions
-├─ id (PK), patientId → users.id
-├─ imageUrl, documentType
-├─ ocrConfidence, ocrMethod, rawText, cleanedText
-├─ structuredData (JSON — medications, guidelines, etc.)
-├─ prescribingDoctor, prescriptionDate, uploadedAt
-
-medications
-├─ id (PK), patientId → users.id
-├─ prescriptionId → prescriptions.id
-├─ doctorId → users.id
-├─ drugName, dosage, form (tablet/capsule/syrup/...)
-├─ frequency, timeOfDay (JSON), duration
-├─ startDate, endDate, instructions
-├─ isActive (boolean)
-├─ addedBy: "ocr" | "doctor" | "patient"
-├─ createdAt, updatedAt
-
-medicationLogs
-├─ id (PK), medicationId → medications.id
-├─ patientId → users.id
-├─ status: "taken" | "missed" | "skipped"
-├─ scheduledTime, takenAt, notes, logDate, createdAt
-
-// ─── Exercise Tracking ──────────────────────────────────────────
-
-exerciseRoutines
-├─ id (PK), patientId → users.id, doctorId → users.id
-├─ name, type: "cardio" | "strength" | "flexibility" | "physio" | "yoga" | "walking" | "other"
-├─ description, frequency, durationMinutes
-├─ timeOfDay, daysOfWeek (JSON), sets, reps
-├─ isActive, addedBy: "doctor" | "patient"
-├─ createdAt
-
-exerciseLogs
-├─ id (PK), routineId → exerciseRoutines.id
-├─ patientId → users.id
-├─ status: "completed" | "partial" | "skipped"
-├─ durationMinutes, notes, logDate, completedAt, createdAt
-
-// ─── Communication ──────────────────────────────────────────────
-
-conversations
-├─ id (PK), patientId → users.id, doctorId → users.id
-├─ lastMessageAt, createdAt
-
-messages
-├─ id (PK), conversationId → conversations.id
-├─ senderId → users.id
-├─ content, type: "text" | "scan" | "report"
-├─ createdAt
-
-notifications
-├─ id (PK), userId → users.id
-├─ type: "scan_ready" | "report_signed" | "urgent_alert" | "message_received" | "appointment" | ...
-├─ message, link, isRead, createdAt
-
-// ─── Scheduling ─────────────────────────────────────────────────
-
-appointments
-├─ id (PK), patientId → users.id, doctorId → users.id
-├─ scheduledAt
-├─ type: "initial" | "follow_up" | "emergency" | "review"
-├─ notes, status: "scheduled" | "confirmed" | "completed" | "cancelled"
-├─ createdAt
-
-followUps
-├─ id (PK), scanId → scans.id, patientId → users.id
-├─ scheduledFor (Unix timestamp)
-├─ type: "email" | "call"
-├─ status: "pending" | "sent" | "failed" | "cancelled"
-├─ createdAt
-
-// ─── Misc ───────────────────────────────────────────────────────
-
-familyMembers
-├─ id (PK), patientId → users.id
-├─ relation, name
-
-voiceNotes
-├─ id (PK), scanId → scans.id
-├─ transcription, audioUrl, createdAt
-```
 
 ---
 
@@ -965,8 +705,8 @@ Response:
 
 ### **Step 1: Clone Repository**
 ```bash
-git clone https://github.com/atharvavdeo/VaidyaVision---IIIT-Pune.git
-cd VaidyaVision---IIIT-Pune
+git clone https://github.com/atharvavdeo/Vaidya-Vision.git
+cd Vaidya-Vision
 ```
 
 ### **Step 2: Frontend Setup**
@@ -1278,13 +1018,3 @@ All models are packaged in a single `medical_ai_system_final.pth` (255MB) contai
 ## 📄 License
 
 MIT License — See LICENSE file for details.
-
----
-
-<div align="center">
-
-**Built with ❤️ by the VaidyaVision Team — IIIT Pune**
-
-*"Empowering clinicians with AI, not replacing them."*
-
-</div>
